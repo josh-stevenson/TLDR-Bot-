@@ -61,8 +61,8 @@ Ini, TOML
 # .streamlit/secrets.toml
 
 API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-MODEL_NAME = "iep-gpt-oss-120b"
-API_URL = "https://ai.nutanix.com/api/v1/chat/completions"
+MODEL_NAME = "[MODEL_ENDPOINT_NAME]"
+API_URL = "https://[NAI_URL]/api/v1/chat/completions"
 Your app.py should be updated to pull these values from st.secrets.
 
 ### 4. Run the Application

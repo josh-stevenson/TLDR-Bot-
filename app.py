@@ -51,9 +51,9 @@ def extract_text_from_pdf(pdf_file):
 ## API Communitcation Function ##
 ## This funtion calls GPT-OSS-120b endpoint
 
-def get_llm_response(prompt_text, api_key="db076c5a-b4d9-44b5-bc93-0be3922df085"):
+def get_llm_response(prompt_text, api_key="[YOUR_API_KEY_HERE"):
     """Sends a prompt to the LLM and gets a response."""
-    api_url = "https://ai.nutanix.com/api/v1/chat/completions" # Replace with actual endpoint
+    api_url = "https://[YOUR_URL_HERE]/api/v1/chat/completions" # Replace with actual endpoint
     
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -63,7 +63,7 @@ def get_llm_response(prompt_text, api_key="db076c5a-b4d9-44b5-bc93-0be3922df085"
     # Construct the payload based on the API's requirements
     # This usually includes the model name and the message history
     payload = {
-        "model": "iep-gpt-oss-120b",
+        "model": "[MODEL_ENDPOINT_NAME_HERE",
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             *st.session_state.messages, # Include past conversation
@@ -107,4 +107,5 @@ if prompt:
             st.markdown(response_text)
             
     # 4. Add assistant response to chat history
+
     st.session_state.messages.append({"role": "assistant", "content": response_text})

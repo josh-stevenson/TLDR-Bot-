@@ -1,6 +1,3 @@
-# TLDR-Bot-
-Lightweight Private LLM Chat for NAI Demonstrations
-
 Private LLM Chat Interface
 This repository contains a simple yet powerful front-end application built with Streamlit to interact with a privately hosted Large Language Model (LLM). It provides a user-friendly chat interface that allows for direct prompting and document uploads for Retrieval-Augmented Generation (RAG).
 
@@ -23,12 +20,20 @@ Self-hosting gives you complete control over the model. You can fine-tune it on 
 Follow these steps to set up and run the application locally.
 
 ### Prerequisites
+VSCode or a similar code editor.
+
+Git installed on your local machine.
+
 Conda or Miniconda installed.
 
 Python 3.9 or higher.
 
+A unique API Key from NAI. This is assigned per user from the Model Endpoint
+
+The Endpoint URL for the LLM you intend to use.
+
 ### 1. Clone the Repository
-Clone this repository to your local machine:
+Clone this repository to your local machine using Git:
 
 Bash
 
@@ -61,11 +66,16 @@ Ini, TOML
 # .streamlit/secrets.toml
 
 API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-MODEL_NAME = "[MODEL_ENDPOINT_NAME]"
-API_URL = "https://[NAI_URL]/api/v1/chat/completions"
-Your app.py should be updated to pull these values from st.secrets.
+MODEL_NAME = "iep-gpt-oss-120b"
+API_URL = "https://ai.nutanix.com/api/v1/chat/completions"
+### 4. Edit the Script
+There are two parts of the app.py script that you will need to edit:
 
-### 4. Run the Application
+API Key: This is a unique key that identifies you to the LLM provider. You will need to replace the placeholder in the secrets.toml file with your own key.
+
+Endpoint URL: This is the URL of the LLM you want to use. You will need to replace the placeholder in the secrets.toml file with the correct URL.
+
+### 5. Run the Application
 Launch the Streamlit application from your terminal:
 
 Bash
@@ -78,4 +88,5 @@ Chat with the Model: Type a question or prompt into the input box at the bottom 
 
 Use a Document for Context: Click the "Browse files" button in the sidebar to upload a PDF document. The application will extract the text and provide it as context for your next prompt.
 
+Conversation History: The application keeps track of your current conversation session
 

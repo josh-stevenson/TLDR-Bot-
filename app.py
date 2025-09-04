@@ -5,36 +5,14 @@ import io
 
 # --- Page Configuration ---
 st.set_page_config(
-    page_title="GPT-OSS-120b Chat",
-    page_icon="🤖",
+    page_title="Private LLM Chat",
+    page_icon="📄",
     layout="wide"
 )
 
-st.title("🤖 TLDR Bot with GPT-OSS-120b")
+st.title("📄 Private LLM Interaction Hub")
 
-# --- Session State Initialization ---
-# This is crucial to keep track of the chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# --- Display existing messages ---
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
-
-# --- Sidebar for Controls & File Upload Widget---
-with st.sidebar:
-    st.header("Controls")
-    uploaded_file = st.file_uploader(
-        "Upload a document (PDF)", 
-        type=['pdf']
-    )
-    # You can add other controls here, like temperature sliders etc.
-
-# --- User Input at the bottom ---
-prompt = st.chat_input("What would you like to ask your document?")
-
-## Document Processing - extracts texts from PDF Files.
+# --- Helper Functions ---
 
 def extract_text_from_pdf(pdf_file):
     """Extracts text from an uploaded PDF file."""
@@ -47,23 +25,29 @@ def extract_text_from_pdf(pdf_file):
     except Exception as e:
         st.error(f"Error reading PDF file: {e}")
         return None
-    
-## API Communitcation Function ##
-## This funtion calls GPT-OSS-120b endpoint
 
-def get_llm_response(prompt_text, api_key="[YOUR_API_KEY_HERE"):
-    """Sends a prompt to the LLM and gets a response."""
-    api_url = "https://[YOUR_URL_HERE]/api/v1/chat/completions" # Replace with actual endpoint
-    
+def get_llm_response(prompt_text):
+    """
+    Sends a prompt to the LLM and gets a response.
+    Loads credentials securely from st.secrets.
+    """
+    # --- Load credentials and config from the secrets file ---
+    # This is the key change: No more hardcoded values.
+    try:
+        api_key = st.secrets["API_KEY"]
+        api_url = st.secrets["API_URL"]
+        model_name = st.secrets["MODEL_NAME"]
+    except KeyError as e:
+        st.error(f"Missing credential in secrets.toml: {e}. Please check your configuration.")
+        return None
+
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
     
-    # Construct the payload based on the API's requirements
-    # This usually includes the model name and the message history
     payload = {
-        "model": "[MODEL_ENDPOINT_NAME_HERE",
+        "model": model_name,
         "messages": [
             {"role": "system", "content": "You are a helpful assistant."},
             *st.session_state.messages, # Include past conversation
@@ -77,7 +61,31 @@ def get_llm_response(prompt_text, api_key="[YOUR_API_KEY_HERE"):
         return response.json()["choices"][0]["message"]["content"]
     except requests.exceptions.RequestException as e:
         return f"Error communicating with the API: {e}"
-    
+    except (KeyError, IndexError) as e:
+        return f"Error parsing API response: {e}. Response: {response.text}"
+
+# --- Session State Initialization ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# --- UI Components ---
+
+# Display existing messages
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Sidebar for Controls & File Upload
+with st.sidebar:
+    st.header("Document Upload")
+    uploaded_file = st.file_uploader(
+        "Upload a PDF for context", 
+        type=['pdf']
+    )
+
+# User Input at the bottom
+prompt = st.chat_input("Ask a question...")
+
 # --- Main Logic ---
 if prompt:
     # 1. Handle document context if a file is uploaded
@@ -102,10 +110,11 @@ if prompt:
         
     # 3. Get LLM response and display it
     with st.chat_message("assistant"):
-        with st.spinner("Thinking... 🤔"):
+        with st.spinner("Thinking..."):
+            # The function call is now simpler
             response_text = get_llm_response(full_prompt)
-            st.markdown(response_text)
-            
-    # 4. Add assistant response to chat history
+            if response_text:
+                st.markdown(response_text)
+                # 4. Add assistant response to chat history
+                st.session_state.messages.append({"role": "assistant", "content": response_text})
 
-    st.session_state.messages.append({"role": "assistant", "content": response_text})

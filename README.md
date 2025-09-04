@@ -66,8 +66,8 @@ Ini, TOML
 # .streamlit/secrets.toml
 
 API_KEY = "sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-MODEL_NAME = "iep-gpt-oss-120b"
-API_URL = "https://ai.nutanix.com/api/v1/chat/completions"
+MODEL_NAME = "[model_name_here]"
+API_URL = "https://[your_url_here]/api/v1/chat/completions"
 ### 4. Edit the Script
 There are two parts of the app.py script that you will need to edit:
 
